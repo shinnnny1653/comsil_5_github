@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+	echo "Usage: phone searchfor[...searchfor]"
+	echo "(You didn't tell me what you want to search for.)"
+	exit 1
+fi
+
+pattern=$(printf "%s|" "$@")
+pattern=${pattern%|}
+
+egrep "$pattern" mydata|while read line
+do
+	name=$(echo "$line" | sed 's/[0-9].*//')
+	phone=$(echo "$line" | grep -o '[0-9-]*$')
+	address=$(echo "$line" | sed "s/$name//" | sed "s/$phone//")
+
+	echo "--------------->"
+	echo "name: $name"
+	echo "address: $address"
+	echo "phone: $phone"
+	echo "<---------------"
+done
